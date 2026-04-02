@@ -2,6 +2,30 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import {
+  Menu,
+  LayoutDashboard,
+  FileText,
+  BarChart3,
+  DollarSign,
+  Package,
+  Trash2,
+  Eye,
+  Plus,
+  RefreshCw,
+} from "lucide-react";
 
 interface Entry {
   _id: string;
@@ -26,13 +50,17 @@ interface Entry {
     totalValue: number;
   };
   createdAt: string;
+  title?: string;
+  blankWoId?: number;
 }
 
 export default function Dashboard() {
   const [entries, setEntries] = useState<Entry[]>([]);
   const [loading, setLoading] = useState(true);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
     fetchEntries();
   }, []);
 
@@ -71,8 +99,12 @@ export default function Dashboard() {
   };
 
   const menuItems = [
-    { href: "/", label: "Dashboard", icon: "📊", current: true },
-    { href: "/data-entry", label: "Data Entry", icon: "📝", current: false },
+    { href: "/", label: "Dashboard", icon: LayoutDashboard, current: true },
+    { href: "/blank-wo/1", label: "Blank WO 1", icon: FileText, current: false },
+    { href: "/blank-wo/2", label: "Blank WO 2", icon: FileText, current: false },
+    { href: "/blank-wo/3", label: "Blank WO 3", icon: FileText, current: false },
+    { href: "/blank-wo/4", label: "Blank WO 4", icon: FileText, current: false },
+    { href: "/master-invoice", label: "Master Invoice", icon: BarChart3, current: false },
   ];
 
   // Calculate stats
@@ -86,221 +118,303 @@ export default function Dashboard() {
     0
   );
 
+  const Sidebar = () => (
+    <aside className="w-full md:w-72 border-r border-white/10 bg-black/95 backdrop-blur-xl min-h-screen">
+      <div className="p-6 md:p-8">
+        <Link href="/" className="inline-block">
+          <h1 className="text-2xl md:text-3xl font-black text-white cursor-pointer">
+            Tracker
+          </h1>
+        </Link>
+        <p className="text-sm text-gray-400 mt-2 font-bold">
+          Work Order Management
+        </p>
+      </div>
+
+      <nav className="mt-6 md:mt-8 px-3 md:px-4">
+        <p className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3 px-3 hidden md:block">
+          Navigation
+        </p>
+        {menuItems.map((item) => {
+          const Icon = item.icon;
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={`flex items-center gap-3 px-3 md:px-4 py-3 rounded-xl mb-2 transition-all duration-300 group ${
+                item.current
+                  ? "bg-white text-black font-black shadow-lg shadow-white/20 scale-105"
+                  : "text-gray-400 hover:bg-white/5 hover:text-white hover:scale-102"
+              }`}
+            >
+              <Icon className="w-5 h-5 md:w-6 md:h-6 group-hover:scale-110 transition-transform" />
+              <span className="font-bold">{item.label}</span>
+            </Link>
+          );
+        })}
+      </nav>
+    </aside>
+  );
+
+  if (!mounted) return null;
+
   return (
-    <div className="min-h-screen bg-linear-to-br from-slate-50 to-slate-100 dark:from-gray-900 dark:to-gray-800">
-      <div className="flex">
-        {/* Sidebar */}
-        <aside className="w-64 bg-white dark:bg-gray-800 shadow-lg min-h-screen">
-          <div className="p-6">
-            <h1 className="text-2xl font-bold text-slate-800 dark:text-white">
-              📦 Tracker
-            </h1>
-            <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
-              Work Order Management
-            </p>
+    <div className="min-h-screen bg-black relative overflow-hidden">
+      {/* Animated background effects */}
+      <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-white/5"></div>
+      <div className="absolute top-0 left-1/4 w-96 h-96 bg-white/5 rounded-full blur-3xl"></div>
+      <div className="absolute top-0 right-1/4 w-96 h-96 bg-white/5 rounded-full blur-3xl"></div>
+      <div className="absolute bottom-0 left-1/3 w-96 h-96 bg-white/5 rounded-full blur-3xl"></div>
+
+      <div className="relative">
+        {/* Mobile Header */}
+        <div className="md:hidden sticky top-0 z-50 border-b border-white/10 bg-black/95 backdrop-blur-xl">
+          <div className="flex items-center justify-between p-4">
+            <Sheet>
+              <SheetTrigger>
+                <button className="text-white p-2 hover:bg-white/10 rounded-lg transition-colors">
+                  <Menu className="h-6 w-6" />
+                </button>
+              </SheetTrigger>
+              <SheetContent side="left" className="w-72 p-0 bg-black border-white/10">
+                <Sidebar />
+              </SheetContent>
+            </Sheet>
+            <Link href="/" className="inline-block">
+              <h1 className="text-xl font-black text-white">
+                Tracker
+              </h1>
+            </Link>
+            <div className="w-10"></div>
+          </div>
+        </div>
+
+        <div className="flex">
+          {/* Desktop Sidebar */}
+          <div className="hidden md:block">
+            <Sidebar />
           </div>
 
-          <nav className="mt-6 px-3">
-            {menuItems.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`flex items-center gap-3 px-4 py-3 rounded-lg mb-2 transition-all duration-200 ${
-                  item.current
-                    ? "bg-blue-50 text-blue-600 dark:bg-blue-900/20 dark:text-blue-400 font-medium"
-                    : "text-slate-600 hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-gray-700/50"
-                }`}
-              >
-                <span className="text-xl">{item.icon}</span>
-                <span>{item.label}</span>
-              </Link>
-            ))}
-          </nav>
-        </aside>
-
-        {/* Main Content */}
-        <main className="flex-1 p-8">
-          <div className="max-w-6xl mx-auto">
-            <div className="mb-8">
-              <h2 className="text-3xl font-bold text-slate-800 dark:text-white">
-                Welcome Back
-              </h2>
-              <p className="text-slate-600 dark:text-slate-400 mt-2">
-                Manage your work orders and track inventory items
-              </p>
-            </div>
-
-            {/* Stats Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-              <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-slate-200 dark:border-gray-700">
-                <div className="flex items-center justify-between">
+          {/* Main Content */}
+          <main className="flex-1 p-4 md:p-8 pb-20 md:pb-8">
+            <div className="w-full">
+              {/* Header */}
+              <div className="mb-8 md:mb-12">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4">
                   <div>
-                    <p className="text-sm text-slate-500 dark:text-slate-400">
-                      Total Entries
-                    </p>
-                    <p className="text-3xl font-bold text-slate-800 dark:text-white mt-1">
-                      {loading ? "..." : totalEntries}
+                    <h2 className="text-3xl md:text-5xl font-black text-white mb-2">
+                      Welcome Back
+                    </h2>
+                    <p className="text-base md:text-lg text-gray-400 font-bold">
+                      Manage your work orders and track inventory items
                     </p>
                   </div>
-                  <div className="text-4xl">📋</div>
-                </div>
-              </div>
-
-              <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-slate-200 dark:border-gray-700">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-slate-500 dark:text-slate-400">
-                      Total Items
-                    </p>
-                    <p className="text-3xl font-bold text-slate-800 dark:text-white mt-1">
-                      {loading ? "..." : totalQuantity}
-                    </p>
-                  </div>
-                  <div className="text-4xl">🔧</div>
-                </div>
-              </div>
-
-              <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-slate-200 dark:border-gray-700">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-slate-500 dark:text-slate-400">
-                      Total Value
-                    </p>
-                    <p className="text-3xl font-bold text-slate-800 dark:text-white mt-1">
-                      {loading ? "..." : `$${totalValue.toFixed(2)}`}
-                    </p>
-                  </div>
-                  <div className="text-4xl">💰</div>
-                </div>
-              </div>
-            </div>
-
-            {/* Quick Actions */}
-            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-slate-200 dark:border-gray-700 mb-8">
-              <h3 className="text-lg font-semibold text-slate-800 dark:text-white mb-4">
-                Quick Actions
-              </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <Link
-                  href="/data-entry"
-                  className="flex items-center gap-4 p-4 rounded-lg border-2 border-dashed border-slate-300 dark:border-gray-600 hover:border-blue-500 dark:hover:border-blue-400 transition-colors group"
-                >
-                  <div className="text-3xl group-hover:scale-110 transition-transform">
-                    ➕
-                  </div>
-                  <div>
-                    <p className="font-medium text-slate-800 dark:text-white">
+                  <Link href="/blank-wo/1" className="hidden sm:block">
+                    <Button
+                      size="lg"
+                      className="bg-white hover:bg-gray-200 text-black font-black shadow-2xl hover:scale-105 transition-all"
+                    >
+                      <Plus className="mr-2 h-5 w-5" />
                       New Entry
-                    </p>
-                    <p className="text-sm text-slate-500 dark:text-slate-400">
-                      Create a new work order entry
-                    </p>
-                  </div>
-                </Link>
-              </div>
-            </div>
-
-            {/* Recent Entries */}
-            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-slate-200 dark:border-gray-700">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold text-slate-800 dark:text-white">
-                  Recent Entries
-                </h3>
-                <button
-                  onClick={fetchEntries}
-                  className="text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
-                >
-                  🔄 Refresh
-                </button>
-              </div>
-
-              {loading ? (
-                <div className="text-center py-8 text-slate-500 dark:text-slate-400">
-                  Loading entries...
-                </div>
-              ) : entries.length === 0 ? (
-                <div className="text-center py-8 text-slate-500 dark:text-slate-400">
-                  <p className="mb-4">No entries yet. Create your first entry!</p>
-                  <Link
-                    href="/data-entry"
-                    className="inline-block px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors"
-                  >
-                    Create Entry
+                    </Button>
                   </Link>
                 </div>
-              ) : (
-                <div className="overflow-x-auto">
-                  <table className="w-full">
-                    <thead>
-                      <tr className="border-b border-slate-200 dark:border-gray-700">
-                        <th className="px-4 py-3 text-left text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
-                          Date
-                        </th>
-                        <th className="px-4 py-3 text-left text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
-                          Work Order
-                        </th>
-                        <th className="px-4 py-3 text-left text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
-                          Contractor
-                        </th>
-                        <th className="px-4 py-3 text-left text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
-                          Items
-                        </th>
-                        <th className="px-4 py-3 text-left text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
+              </div>
+
+              {/* Stats Cards */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mb-8">
+                <Card className="border border-white/10 bg-black/50 backdrop-blur-xl shadow-2xl hover:scale-105 transition-all duration-300">
+                  <CardContent className="p-4 md:p-6">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-xs md:text-sm font-black text-gray-500 uppercase tracking-wider">
+                          Total Entries
+                        </p>
+                        <p className="text-3xl md:text-5xl font-black text-white mt-2">
+                          {loading ? "..." : totalEntries}
+                        </p>
+                      </div>
+                      <div className="w-12 h-12 md:w-16 md:h-16 bg-white/5 rounded-xl flex items-center justify-center">
+                        <FileText className="w-6 h-6 md:w-8 md:h-8 text-white" />
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card className="border border-white/10 bg-black/50 backdrop-blur-xl shadow-2xl hover:scale-105 transition-all duration-300">
+                  <CardContent className="p-4 md:p-6">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-xs md:text-sm font-black text-gray-500 uppercase tracking-wider">
+                          Total Items
+                        </p>
+                        <p className="text-3xl md:text-5xl font-black text-white mt-2">
+                          {loading ? "..." : totalQuantity}
+                        </p>
+                      </div>
+                      <div className="w-12 h-12 md:w-16 md:h-16 bg-white/5 rounded-xl flex items-center justify-center">
+                        <Package className="w-6 h-6 md:w-8 md:h-8 text-white" />
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card className="border border-white/10 bg-black/50 backdrop-blur-xl shadow-2xl hover:scale-105 transition-all duration-300">
+                  <CardContent className="p-4 md:p-6">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-xs md:text-sm font-black text-gray-500 uppercase tracking-wider">
                           Total Value
-                        </th>
-                        <th className="px-4 py-3 text-left text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider w-24">
-                          Actions
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-200 dark:divide-gray-700">
-                      {entries.slice(0, 10).map((entry) => (
-                        <tr
-                          key={entry._id}
-                          className="hover:bg-slate-50 dark:hover:bg-gray-700/50 transition-colors"
+                        </p>
+                        <p className="text-2xl md:text-4xl font-black text-white mt-2">
+                          {loading ? "..." : `$${totalValue.toFixed(2)}`}
+                        </p>
+                      </div>
+                      <div className="w-12 h-12 md:w-16 md:h-16 bg-white/5 rounded-xl flex items-center justify-center">
+                        <DollarSign className="w-6 h-6 md:w-8 md:h-8 text-white" />
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* Mobile Quick Actions */}
+              <div className="md:hidden mb-8">
+                <Link href="/blank-wo/1" className="block">
+                  <Card className="border border-white/10 bg-white text-black shadow-2xl">
+                    <CardContent className="p-6">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-sm font-black uppercase tracking-wider">
+                            Quick Action
+                          </p>
+                          <p className="text-xl font-black mt-1 flex items-center">
+                            <Plus className="mr-2 h-5 w-5" />
+                            New Entry
+                          </p>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </Link>
+              </div>
+
+              {/* Recent Entries */}
+              <Card className="border border-white/10 bg-black/50 backdrop-blur-xl shadow-2xl">
+                <CardHeader>
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="text-xl md:text-2xl font-black text-white">
+                      Recent Entries
+                    </CardTitle>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={fetchEntries}
+                      className="bg-white/5 hover:bg-white/10 text-white border-white/20 font-bold"
+                    >
+                      <RefreshCw className="mr-2 h-4 w-4" />
+                      <span className="hidden sm:inline">Refresh</span>
+                    </Button>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  {loading ? (
+                    <div className="text-center py-8 md:py-12">
+                      <div className="inline-block animate-spin rounded-full h-8 w-8 md:h-12 md:w-12 border-4 border-white/20 border-t-white"></div>
+                      <p className="text-white mt-4 font-bold">Loading entries...</p>
+                    </div>
+                  ) : entries.length === 0 ? (
+                    <div className="text-center py-8 md:py-12">
+                      <div className="w-16 h-16 md:w-20 md:h-20 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <FileText className="w-8 h-8 md:w-10 md:h-10 text-gray-500" />
+                      </div>
+                      <p className="text-white mb-6 text-lg font-bold">
+                        No entries yet. Create your first entry!
+                      </p>
+                      <Link href="/blank-wo/1">
+                        <Button
+                          size="lg"
+                          className="bg-white hover:bg-gray-200 text-black font-bold shadow-xl"
                         >
-                          <td className="px-4 py-3 text-sm text-slate-800 dark:text-white">
-                            {new Date(entry.headerData.date).toLocaleDateString()}
-                          </td>
-                          <td className="px-4 py-3 text-sm text-slate-800 dark:text-white">
-                            {entry.headerData.workOrder || "-"}
-                          </td>
-                          <td className="px-4 py-3 text-sm text-slate-800 dark:text-white">
-                            {entry.headerData.contractor || "-"}
-                          </td>
-                          <td className="px-4 py-3 text-sm text-slate-800 dark:text-white">
-                            {entry.entries.length}
-                          </td>
-                          <td className="px-4 py-3 text-sm font-medium text-slate-800 dark:text-white">
-                            ${entry.totals.totalValue.toFixed(2)}
-                          </td>
-                          <td className="px-4 py-3">
-                            <div className="flex items-center gap-2">
-                              <Link
-                                href={`/data-entry?id=${entry._id}`}
-                                className="p-1 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded transition-colors"
-                                title="View"
-                              >
-                                👁️
-                              </Link>
-                              <button
-                                onClick={() => deleteEntry(entry._id)}
-                                className="p-1 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded transition-colors"
-                                title="Delete"
-                              >
-                                🗑️
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              )}
+                          <Plus className="mr-2 h-5 w-5" />
+                          Create First Entry
+                        </Button>
+                      </Link>
+                    </div>
+                  ) : (
+                    <div className="overflow-x-auto">
+                      <Table>
+                        <TableHeader>
+                          <TableRow className="border-white/10 hover:bg-white/5">
+                            <TableHead className="text-white font-bold">Date</TableHead>
+                            <TableHead className="text-white font-bold">Work Order</TableHead>
+                            <TableHead className="text-white font-bold hidden md:table-cell">Contractor</TableHead>
+                            <TableHead className="text-white font-bold">Items</TableHead>
+                            <TableHead className="text-white font-bold">Total Value</TableHead>
+                            <TableHead className="text-white font-bold text-right">Actions</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {entries.slice(0, 10).map((entry) => (
+                            <TableRow
+                              key={entry._id}
+                              className="border-white/10 hover:bg-white/5 transition-colors"
+                            >
+                              <TableCell className="text-white font-bold">
+                                {new Date(entry.headerData.date).toLocaleDateString()}
+                              </TableCell>
+                              <TableCell className="text-white font-bold">
+                                {entry.headerData.workOrder || (
+                                  <span className="text-gray-600">-</span>
+                                )}
+                              </TableCell>
+                              <TableCell className="text-white font-bold hidden md:table-cell">
+                                {entry.headerData.contractor || (
+                                  <span className="text-gray-600">-</span>
+                                )}
+                              </TableCell>
+                              <TableCell className="text-white">
+                                <Badge className="bg-white text-black border-0 font-bold">
+                                  {entry.entries.length}
+                                </Badge>
+                              </TableCell>
+                              <TableCell className="text-white font-black">
+                                ${entry.totals.totalValue.toFixed(2)}
+                              </TableCell>
+                              <TableCell className="text-white text-right">
+                                <div className="flex items-center justify-end gap-2">
+                                  <Link href={`/blank-wo/1?id=${entry._id}`}>
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      className="text-white hover:bg-white/10 hover:scale-110 transition-all"
+                                      title="View"
+                                    >
+                                      <Eye className="h-4 w-4" />
+                                    </Button>
+                                  </Link>
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={() => deleteEntry(entry._id)}
+                                    className="text-red-500 hover:bg-red-500/10 hover:scale-110 transition-all"
+                                    title="Delete"
+                                  >
+                                    <Trash2 className="h-4 w-4" />
+                                  </Button>
+                                </div>
+                              </TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
             </div>
-          </div>
-        </main>
+          </main>
+        </div>
       </div>
     </div>
   );

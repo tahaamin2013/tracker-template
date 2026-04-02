@@ -4,7 +4,10 @@
       "Bash(pip show:*)",
       "Bash(pip install:*)",
       "Bash(npm install:*)",
-      "Bash(npx shadcn@latest init -y -d)"
+      "Bash(npx shadcn@latest init -y -d)",
+      "Bash(npx shadcn@latest add card input label table badge)",
+      "Bash(npx shadcn@latest add dropdown-menu sheet tabs)",
+      "Bash(npm run:*)"
     ]
   }
 }
