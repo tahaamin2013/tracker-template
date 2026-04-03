@@ -7,7 +7,25 @@
       "Bash(npx shadcn@latest init -y -d)",
       "Bash(npx shadcn@latest add card input label table badge)",
       "Bash(npx shadcn@latest add dropdown-menu sheet tabs)",
-      "Bash(npm run:*)"
+      "Bash(npm run:*)",
+      "Bash(npx prisma:*)",
+      "Bash(npx shadcn@latest add dropdown-menu)",
+      "Bash(npm uninstall:*)",
+      "Bash(taskkill /PID 14804 /F)",
+      "Bash(taskkill /F /IM node.exe /T)",
+      "Bash(netstat -ano)",
+      "Bash(taskkill /F /PID 14804)",
+      "Bash(taskkill //F //PID 14804)",
+      "Bash(taskkill //F //IM node.exe)",
+      "Bash(taskkill //F //PID 6764)",
+      "Bash(mkdir -p \"d:/tracker-template/src/app/[contractId]/blank-wo\")",
+      "Bash(mkdir -p \"d:/tracker-template/src/app/[contractId]\")",
+      "Bash(mkdir -p \"d:/tracker-template/src/app/[contractId]/blank-wo/[id]\")",
+      "Bash(cp \"d:/tracker-template/src/app/blank-wo/[id]/page.tsx\" \"d:/tracker-template/src/app/[contractId]/blank-wo/[id]/page.tsx\")",
+      "Bash(mkdir -p \"d:/tracker-template/src/app/[contractId]/master-invoice\")",
+      "Bash(mkdir -p \"d:/tracker-template/src/app/[contractId]/black-wo-temp\")",
+      "Bash(cp \"d:/tracker-template/src/app/master-invoice/page.tsx\" \"d:/tracker-template/src/app/[contractId]/master-invoice/page.tsx\")",
+      "Bash(cp \"d:/tracker-template/src/app/black-wo-temp/page.tsx\" \"d:/tracker-template/src/app/[contractId]/black-wo-temp/page.tsx\")"
     ]
   }
 }

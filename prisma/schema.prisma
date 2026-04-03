@@ -1,0 +1,61 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model Contract {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  entries WorkOrderEntry[]
+}
+
+model WorkOrderEntry {
+  id                        String   @id @default(auto()) @map("_id") @db.ObjectId
+  contractId              String   @db.ObjectId
+  contract                Contract @relation(fields: [contractId], references: [id], onDelete: Cascade)
+  title                   String?
+  blankWoId                Int?
+  date                    String
+  workOrder               String
+  assetNo                 String
+  contractor              String
+  address                 String?
+  sawsInspector           String?
+  status                  String?  @default("Pending")
+  comments                String?
+  woCompleted             Boolean? @default(false)
+  restorationDue10Days    String?  // Date
+  restorationCompleteDate String?  // Date
+  pendingRestoration      Boolean? @default(false)
+  restorationOver10Days  Boolean? @default(false)
+  notesUploaded           Boolean? @default(false)
+  reparationUploaded       Boolean? @default(false)
+  restorationUploaded      Boolean? @default(false)
+  entries                 Json
+  totals                  Json
+  createdAt               DateTime @default(now())
+  updatedAt               DateTime @updatedAt
+
+  @@index([contractId])
+}
+
+model BlackWoTemplate {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  itemNo      String
+  description String
+  unit        String
+  unitPrice   Float
+  checked     Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}

@@ -10,7 +10,6 @@ import { Label } from "@/components/ui/label";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Sidebar } from "@/components/Sidebar";
 import { DescriptionSelector } from "@/components/DescriptionSelector";
-import { useContractState } from "@/lib/contractState";
 import {
   Menu,
   Save,
@@ -52,8 +51,8 @@ interface Template {
 export default function BlankWOPage() {
   const params = useParams();
   const searchParams = useSearchParams();
+  const contractId = params.contractId as string;
   const id = params.id as string || "1";
-  const { selectedContract, isInitialized } = useContractState();
   const [allEntries, setAllEntries] = useState<any[]>([]);
 
   const [headerData, setHeaderData] = useState<HeaderData>({
@@ -208,7 +207,7 @@ export default function BlankWOPage() {
         headerData,
         entries,
         totals,
-        contractId: selectedContract,
+        contractId: contractId,
       };
 
       const response = await fetch("/api/entries", {
@@ -297,7 +296,7 @@ export default function BlankWOPage() {
           {/* Desktop Sidebar */}
           <div className="hidden md:block">
             <Sidebar
-              currentPath={`/blank-wo/${id}`}
+              currentPath={`/${contractId}/blank-wo/${id}`}
               entries={allEntries}
             />
           </div>
@@ -628,7 +627,7 @@ export default function BlankWOPage() {
 
                 {/* Submit Button */}
                 <div className="flex flex-col sm:flex-row justify-end gap-4">
-                  <Link href="/" className="w-full sm:w-auto">
+                  <Link href={`/${contractId}`} className="w-full sm:w-auto">
                     <Button
                       type="button"
                       variant="outline"
